@@ -5,11 +5,55 @@
 }
 
 .search-weather-section {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 3px;
+    border: 1px solid grey;
+    background-image: linear-gradient(to bottom, #87CEFA, #4682B4);
+}
+
+.search-weather-section h2 {
+    width: fit-content;
+    margin: 0 auto;
+    color: white;
+}
+
+.search-bar {
     width: fit-content;
     margin: 0 auto;
 }
 
-.search-weather-section h2{
-    width: fit-content;
+input {
+    height: 30px;
+    width: 300px;
+    border-radius: 18px;
+    padding: 0 10px;
+    border: 1px solid white;
+}
+
+input:hover {
+    border: 1px solid grey;
+}
+
+.search-weather-btn {
+    width: 80px;
+    height: 30px;
     margin: 0 auto;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    transition: transform 200ms;
+}
+
+.search-weather-btn:hover {
+    transform: scale(1.02);
+}
+
+.weather-info {
+    width: fit-content;
+    margin: 150px auto;
 }
