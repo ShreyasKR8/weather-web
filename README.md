@@ -1,0 +1,1 @@
+A simple boilerplate template containing html, js and css file linked together that can be used as template repo.
