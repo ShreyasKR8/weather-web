@@ -1,10 +1,11 @@
 const searchInput = document.getElementById('location-search');
-const weatherInfo = document.querySelector('.weather-info');
 const searchWeatherBtn = document.querySelector('.search-weather-btn');
-const weatherInfoSection = document.querySelector('.weather-info'); 
+const weatherMainInfo = document.querySelector('.weather-main');
+const weatherMiscInfo = document.querySelector('.weather-misc');
 
 function displayWeather(weatherInfo) {
-    weatherInfoSection.replaceChildren();
+    weatherMainInfo.replaceChildren();
+    weatherMiscInfo.replaceChildren();
 
     const location = document.createElement('h3');
     location.classList = 'location';
@@ -12,7 +13,7 @@ function displayWeather(weatherInfo) {
 
     const temperature = document.createElement('p');
     temperature.classList = 'temperature';
-    temperature.textContent = weatherInfo.currentTemp;
+    temperature.textContent = weatherInfo.currentTemp + ' F';
 
     const feelsLike = document.createElement('p');
     feelsLike.classList = 'feels-like';
@@ -24,32 +25,38 @@ function displayWeather(weatherInfo) {
 
     const humidity = document.createElement('p');
     humidity.classList = 'humidity';
-    humidity.textContent = 'Humidity: ' + weatherInfo.humidity;
+    humidity.textContent = 'Humidity: ' + weatherInfo.humidity + ' %';
 
     const windSpeed = document.createElement('p');
     windSpeed.classList = 'wind-speed';
-    windSpeed.textContent = 'Wind speed: ' + weatherInfo.windSpeed;
+    windSpeed.textContent = 'Wind speed: ' + weatherInfo.windSpeed + ' km/h';
 
     const uvIndex = document.createElement('p');
     uvIndex.classList = 'uv-index';
     uvIndex.textContent = 'UV Index: ' + weatherInfo.uvIndex;
 
-    // const maxTemp = document.createElement('p');
-    // maxTemp.classList = 'max-temp';
-    // maxTemp.textContent = weatherInfo.maxTemp;
+    const maxTemp = document.createElement('p');
+    maxTemp.classList = 'max-temp';
+    maxTemp.textContent = weatherInfo.maxTemp;
 
-    // const minTemp = document.createElement('p');
-    // minTemp.classList = 'max-temp';
-    // minTemp.textContent = weatherInfo.minTemp;
+    const minTemp = document.createElement('p');
+    minTemp.classList = 'min-temp';
+    minTemp.textContent = weatherInfo.minTemp;
+
+    const visibility = document.createElement('p');
+    visibility.classList = 'visibility';
+    visibility.textContent = 'Visibility: ' + weatherInfo.visibility + ' km';
     
-    weatherInfoSection.appendChild(location);
-    weatherInfoSection.appendChild(temperature);
-    weatherInfoSection.appendChild(description);
-    // weatherInfoSection.appendChild(maxTemp);
-    weatherInfoSection.appendChild(feelsLike);
-    weatherInfoSection.appendChild(humidity);
-    weatherInfoSection.appendChild(windSpeed);
-    weatherInfoSection.appendChild(uvIndex);
+    weatherMainInfo.appendChild(location);
+    weatherMainInfo.appendChild(temperature);
+    weatherMainInfo.appendChild(description);
+    weatherMainInfo.appendChild(maxTemp);
+    weatherMainInfo.appendChild(minTemp);
+    weatherMainInfo.appendChild(feelsLike);
+    weatherMiscInfo.appendChild(humidity);
+    weatherMiscInfo.appendChild(windSpeed);
+    weatherMiscInfo.appendChild(uvIndex);
+    weatherMiscInfo.appendChild(visibility);
 }
 
 function validateSearchInput() {
@@ -73,6 +80,7 @@ function parseJSON(responseJSON) {
             icon: weatherIcon,
             conditions: weatherCondition,
             feelslike: feelsLike,
+            visibility: visibility,
         },
         description: description,
         days: [{ tempmax: maxTemp, tempmin: minTemp }],
@@ -91,6 +99,7 @@ function parseJSON(responseJSON) {
         maxTemp,
         minTemp,
         feelsLike,
+        visibility,
     };
 }
 
