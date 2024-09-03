@@ -13,11 +13,11 @@ function displayWeather(weatherInfo) {
 
     const temperature = document.createElement('p');
     temperature.classList = 'temperature';
-    temperature.textContent = weatherInfo.currentTemp + ' F';
+    temperature.innerHTML = weatherInfo.currentTemp + '&deg;F';
 
     const feelsLike = document.createElement('p');
     feelsLike.classList = 'feels-like';
-    feelsLike.textContent = 'Feels like: ' + weatherInfo.feelsLike;
+    feelsLike.innerHTML = 'Feels like ' + weatherInfo.feelsLike + '&deg;F';
 
     const description = document.createElement('p');
     description.classList = 'description';
@@ -37,11 +37,7 @@ function displayWeather(weatherInfo) {
 
     const maxTemp = document.createElement('p');
     maxTemp.classList = 'max-temp';
-    maxTemp.textContent = weatherInfo.maxTemp;
-
-    const minTemp = document.createElement('p');
-    minTemp.classList = 'min-temp';
-    minTemp.textContent = weatherInfo.minTemp;
+    maxTemp.innerHTML = weatherInfo.maxTemp + '&deg;F / ' + weatherInfo.minTemp + '&deg;F' ;
 
     const visibility = document.createElement('p');
     visibility.classList = 'visibility';
@@ -51,7 +47,6 @@ function displayWeather(weatherInfo) {
     weatherMainInfo.appendChild(temperature);
     weatherMainInfo.appendChild(description);
     weatherMainInfo.appendChild(maxTemp);
-    weatherMainInfo.appendChild(minTemp);
     weatherMainInfo.appendChild(feelsLike);
     weatherMiscInfo.appendChild(humidity);
     weatherMiscInfo.appendChild(windSpeed);
