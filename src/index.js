@@ -3,6 +3,26 @@ const searchWeatherBtn = document.querySelector('.search-weather-btn');
 const weatherMainInfo = document.querySelector('.weather-main');
 const weatherMiscInfo = document.querySelector('.weather-misc');
 
+const weatherGifMap = new Map();
+weatherGifMap.set('clear-day', '../images/SunnyDay.gif');
+weatherGifMap.set('clear-night', '../images/ClearNight.gif');
+weatherGifMap.set('partly-cloudy-night', '../images/PartlyCloudyNight.gif');
+weatherGifMap.set('partly-cloudy-day', '../images/CloudyDay.gif');
+weatherGifMap.set('cloudy', '../images/CloudyDay.gif');
+weatherGifMap.set('rain', '../images/RainyAnime.gif');
+weatherGifMap.set('showers-day', '../images/RainyDay.gif');
+weatherGifMap.set('showers-night', '../images/RainyNight.gif');
+weatherGifMap.set('snow-showers-day', '../images/Snowy.gif');
+weatherGifMap.set('snow-showers-night', '../images/SnowyNight.gif');
+weatherGifMap.set('snow', '../images/Snowy.gif');
+weatherGifMap.set('thunder', '../images/Thunder.gif');
+weatherGifMap.set('thunder-rain', '../images/Thunder.gif');
+weatherGifMap.set('thunder-showers-day', '../images/Thunder.gif');
+weatherGifMap.set('thunder-showers-night', '../images/Thunder.gif');
+weatherGifMap.set('wind', '../images/WindyCloudyDay.gif');
+weatherGifMap.set('fog', '../images/foggy.gif');
+weatherGifMap.set('hail', '../images/hail.gif');
+
 function displayWeather(weatherInfo) {
     weatherMainInfo.replaceChildren();
     weatherMiscInfo.replaceChildren();
@@ -43,6 +63,11 @@ function displayWeather(weatherInfo) {
     visibility.classList = 'visibility';
     visibility.textContent = 'Visibility: ' + weatherInfo.visibility + ' km';
     
+    const gifSrc = weatherGifMap.get(weatherInfo.weatherIcon);
+    document.body.style.backgroundImage = `url(${gifSrc})`;
+    document.body.style.backgroundColor = 'black';
+    document.body.style.backgroundSize = 'cover';
+
     weatherMainInfo.appendChild(location);
     weatherMainInfo.appendChild(temperature);
     weatherMainInfo.appendChild(description);
