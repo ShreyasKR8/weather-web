@@ -33,11 +33,11 @@ function displayWeather(weatherInfo) {
 
     const temperature = document.createElement('p');
     temperature.classList = 'temperature';
-    temperature.innerHTML = weatherInfo.currentTemp + '&deg;F';
+    temperature.innerHTML = convertToC(weatherInfo.currentTemp) + '&deg;C';
 
     const feelsLike = document.createElement('p');
     feelsLike.classList = 'feels-like';
-    feelsLike.innerHTML = 'Feels like ' + weatherInfo.feelsLike + '&deg;F';
+    feelsLike.innerHTML = 'Feels like ' + convertToC(weatherInfo.feelsLike) + '&deg;C';
 
     const description = document.createElement('p');
     description.classList = 'description';
@@ -57,7 +57,7 @@ function displayWeather(weatherInfo) {
 
     const maxTemp = document.createElement('p');
     maxTemp.classList = 'max-temp';
-    maxTemp.innerHTML = weatherInfo.maxTemp + '&deg;F / ' + weatherInfo.minTemp + '&deg;F' ;
+    maxTemp.innerHTML = convertToC(weatherInfo.maxTemp) + '&deg;F / ' + convertToC(weatherInfo.minTemp) + '&deg;C' ;
 
     const visibility = document.createElement('p');
     visibility.classList = 'visibility';
@@ -143,6 +143,10 @@ async function getWeatherInfo() {
     const weatherInfo = parseJSON(responseJSON);
     console.log(weatherInfo);
     displayWeather(weatherInfo);
+}
+
+function convertToC(temp) {
+    return ((temp - 32) * 5/9).toFixed(1);
 }
 
 searchWeatherBtn.addEventListener('click', handleSearchWeather);
