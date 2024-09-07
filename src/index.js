@@ -1,3 +1,5 @@
+import './style.css';
+
 const searchInput = document.getElementById('location-search');
 const searchWeatherBtn = document.querySelector('.search-weather-btn');
 const weatherMainInfo = document.querySelector('.weather-main');
@@ -37,7 +39,8 @@ function displayWeather(weatherInfo) {
 
     const feelsLike = document.createElement('p');
     feelsLike.classList = 'feels-like';
-    feelsLike.innerHTML = 'Feels like ' + convertToC(weatherInfo.feelsLike) + '&deg;C';
+    feelsLike.innerHTML =
+        'Feels like ' + convertToC(weatherInfo.feelsLike) + '&deg;C';
 
     const description = document.createElement('p');
     description.classList = 'description';
@@ -57,12 +60,17 @@ function displayWeather(weatherInfo) {
 
     const maxTemp = document.createElement('p');
     maxTemp.classList = 'max-temp';
-    maxTemp.innerHTML = convertToC(weatherInfo.maxTemp) + '&deg;F / ' + convertToC(weatherInfo.minTemp) + '&deg;C' ;
+    maxTemp.innerHTML =
+        convertToC(weatherInfo.maxTemp) +
+        '&deg;C' +
+        ' / ' +
+        convertToC(weatherInfo.minTemp) +
+        '&deg;C';
 
     const visibility = document.createElement('p');
     visibility.classList = 'visibility';
     visibility.textContent = 'Visibility: ' + weatherInfo.visibility + ' km';
-    
+
     const gifSrc = weatherGifMap.get(weatherInfo.weatherIcon);
     document.body.style.backgroundImage = `url(${gifSrc})`;
     document.body.style.backgroundColor = 'black';
@@ -139,14 +147,13 @@ async function getWeatherInfo() {
     const response = await fetch(requestURL);
     const responseJSON = await response.json();
     // console.log(responseJSON);
-    localStorage.setItem(responseJSON.address, JSON.stringify(responseJSON));
     const weatherInfo = parseJSON(responseJSON);
-    console.log(weatherInfo);
+    // console.log(weatherInfo);
     displayWeather(weatherInfo);
 }
 
 function convertToC(temp) {
-    return ((temp - 32) * 5/9).toFixed(1);
+    return (((temp - 32) * 5) / 9).toFixed(1);
 }
 
 searchWeatherBtn.addEventListener('click', handleSearchWeather);

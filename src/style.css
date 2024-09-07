@@ -78,7 +78,7 @@ input:hover {
     margin: 5px;
     padding: 20px 10px;
     text-align: center;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 .weather-main {
@@ -90,7 +90,7 @@ input:hover {
     height: 200px;
     padding: 10px;
     color: white;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 .location {
