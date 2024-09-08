@@ -122,15 +122,17 @@ function parseJSON(responseJSON) {
     const {
         address: address,
         resolvedAddress: fullAddress,
-        currentConditions: {
-            uvindex: uvIndex,
-            humidity: humidity,
-            windspeed: windSpeed,
-            icon: weatherIcon,
-            conditions: weatherCondition,
-            visibility: visibility,
-        },
         description: description,
+        days: [
+            {
+                uvindex: uvIndex,
+                humidity: humidity,
+                windspeed: windSpeed,
+                icon: weatherIcon,
+                conditions: weatherCondition,
+                visibility: visibility,
+            },
+        ],
     } = responseJSON;
 
     let {
@@ -185,7 +187,7 @@ async function fetchWeatherInfo() {
 
     const response = await fetch(requestURL);
     const responseJSON = await response.json();
-    // console.log(responseJSON);
+    console.log(responseJSON);
     const weatherInfo = parseJSON(responseJSON);
     // console.log(weatherInfo);
     allTemperatures = weatherInfo.temperatures;
