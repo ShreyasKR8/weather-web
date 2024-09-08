@@ -70,6 +70,10 @@ input[type="checkbox"] {
     transition: all 0.5s;
 }
 
+input[type="checkbox"]:hover {
+    cursor: pointer;
+}
+
 input[type="checkbox"]::before {
     width: 16px;
     height: 16px;

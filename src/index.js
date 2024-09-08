@@ -4,12 +4,13 @@ const CELSIUS = 'C';
 const FAHRENHEIT = 'F';
 let allTemperatures = {};
 let currentTempUnit = CELSIUS;
+let isInitialSearch = true;
 
 const searchInput = document.getElementById('location-search');
 const searchWeatherBtn = document.querySelector('.search-weather-btn');
 const weatherMainInfo = document.querySelector('.weather-main');
 const weatherMiscInfo = document.querySelector('.weather-misc');
-const tempUnitToggle = document.querySelector("input[type=checkbox]");
+const tempUnitToggle = document.querySelector('input[type=checkbox]');
 
 tempUnitToggle.checked = false;
 
@@ -133,14 +134,17 @@ function parseJSON(responseJSON) {
     } = responseJSON;
 
     let {
-        currentConditions: {
-            temp: currentTemp,
-            feelslike: feelsLike,
-        },
-        days: [{ tempmax: maxTemp, tempmin: minTemp }],
+        days: [
+            {
+                temp: currentTemp,
+                feelslike: feelsLike,
+                tempmax: maxTemp,
+                tempmin: minTemp,
+            },
+        ],
     } = responseJSON;
 
-    if(currentTempUnit === FAHRENHEIT) {
+    if (currentTempUnit === FAHRENHEIT) {
         currentTemp = convertCelsiusToFahrenheit(currentTemp);
         feelsLike = convertCelsiusToFahrenheit(feelsLike);
         maxTemp = convertCelsiusToFahrenheit(maxTemp);
@@ -167,14 +171,17 @@ async function handleSearchWeather() {
     if (!validateSearchInput()) {
         return;
     }
-
+    if (isInitialSearch) {
+        isInitialSearch = false;
+    }
     await fetchWeatherInfo();
 }
 
 async function fetchWeatherInfo() {
     const location = searchInput.value;
     const apiKey = 'E7UZ2REAT4L7RM5TCR8J248GX';
-    const requestURL = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?unitGroup=metric&key=${apiKey}`;
+    const formattedDateTime = getFormattedDateTime();
+    const requestURL = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}/${formattedDateTime}?unitGroup=metric&key=${apiKey}`;
 
     const response = await fetch(requestURL);
     const responseJSON = await response.json();
@@ -183,6 +190,19 @@ async function fetchWeatherInfo() {
     // console.log(weatherInfo);
     allTemperatures = weatherInfo.temperatures;
     displayWeather(weatherInfo);
+}
+
+function getFormattedDateTime() {
+    const currentDateTime = new Date();
+    const year = currentDateTime.getFullYear();
+    const month = String(currentDateTime.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+    const day = String(currentDateTime.getDate()).padStart(2, '0');
+    const hours = String(currentDateTime.getHours()).padStart(2, '0');
+    const minutes = String(currentDateTime.getMinutes()).padStart(2, '0');
+    const seconds = String(currentDateTime.getSeconds()).padStart(2, '0');
+
+    const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+    return formattedDateTime;
 }
 
 function convertFahrenheitToCelcius(fahrenheitTemp) {
@@ -195,12 +215,11 @@ function convertCelsiusToFahrenheit(celsiusTemp) {
     return parseFloat(fahrenheitTemp);
 }
 
-searchWeatherBtn.addEventListener('click', handleSearchWeather);
-
-tempUnitToggle.addEventListener('change', switchTemperatureUnit)
-
-function switchTemperatureUnit()
-{
+function switchTemperatureUnit() {
+    if (isInitialSearch) {
+        currentTempUnit = currentTempUnit === CELSIUS ? FAHRENHEIT : CELSIUS;
+        return;
+    }
     if (currentTempUnit === CELSIUS) {
         allTemperatures.currentTemp = convertCelsiusToFahrenheit(
             allTemperatures.currentTemp
@@ -233,3 +252,7 @@ function switchTemperatureUnit()
         updateTemperature(allTemperatures, currentTempUnit);
     }
 }
+
+searchWeatherBtn.addEventListener('click', handleSearchWeather);
+
+tempUnitToggle.addEventListener('change', switchTemperatureUnit);
