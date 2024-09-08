@@ -57,11 +57,59 @@ input:hover {
     transform: scale(1.02);
 }
 
+input[type="checkbox"] {
+    appearance: none;
+    width: 3.4em;
+    height: 1.7em;
+    position: relative;
+    background-color: #808080;
+    background-color: #4682B4;
+    background-color: rgba(255, 255, 255, 1);
+    border: 2px solid black;
+    border-radius: 12px;
+    transition: all 0.5s;
+}
+
+input[type="checkbox"]::before {
+    width: 16px;
+    height: 16px;
+    content: "";
+    background-color: black;
+    position: absolute;
+    top: 1.5px;
+    left: 3px;
+    border-radius: 9px;
+    transition: all 0.5s;
+}
+
+input[type="checkbox"]:checked {
+    transition: all 0.5s;
+}
+
+input[type="checkbox"]:checked::before {
+    left: 55%;
+    transition: all 0.5s;
+}
+
+.temperature-switch {
+    width: fit-content;
+    display: flex;
+    margin: 10px auto;
+}
+
+.celsius-label {
+    margin-right: 3px;
+}
+
+.fahrenheit-label {
+    margin-left: 3px;
+}
+
 .weather-info {
     display: flex;
     flex-direction: column;
-    width: 500px;
-    height: fit-content;
+    /* width: 500px; */
+    /* height: fit-content; */
     margin: 30px auto;
     color: white;
 }
@@ -90,7 +138,6 @@ input:hover {
     height: 200px;
     padding: 10px;
     color: white;
-    background-color: rgba(0, 0, 0, 0.8);
 }
 
 .location {

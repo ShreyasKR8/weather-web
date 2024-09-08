@@ -1,9 +1,17 @@
 import './style.css';
 
+const CELSIUS = 'C';
+const FAHRENHEIT = 'F';
+let allTemperatures = {};
+let currentTempUnit = CELSIUS;
+
 const searchInput = document.getElementById('location-search');
 const searchWeatherBtn = document.querySelector('.search-weather-btn');
 const weatherMainInfo = document.querySelector('.weather-main');
 const weatherMiscInfo = document.querySelector('.weather-misc');
+const tempUnitToggle = document.querySelector("input[type=checkbox]");
+
+tempUnitToggle.checked = false;
 
 const weatherGifMap = new Map();
 weatherGifMap.set('clear-day', '../images/SunnyDay.gif');
@@ -29,62 +37,75 @@ function displayWeather(weatherInfo) {
     weatherMainInfo.replaceChildren();
     weatherMiscInfo.replaceChildren();
 
-    const location = document.createElement('h3');
-    location.classList = 'location';
-    location.textContent = weatherInfo.address;
+    const locationElement = document.createElement('h3');
+    locationElement.classList = 'location';
+    locationElement.textContent = weatherInfo.address;
 
-    const temperature = document.createElement('p');
-    temperature.classList = 'temperature';
-    temperature.innerHTML = convertToC(weatherInfo.currentTemp) + '&deg;C';
+    const temperatureElement = document.createElement('p');
+    temperatureElement.classList = 'temperature';
+    temperatureElement.innerHTML = `${weatherInfo.temperatures.currentTemp}&deg;${currentTempUnit}`;
 
-    const feelsLike = document.createElement('p');
-    feelsLike.classList = 'feels-like';
-    feelsLike.innerHTML =
-        'Feels like ' + convertToC(weatherInfo.feelsLike) + '&deg;C';
+    const feelsLikeElement = document.createElement('p');
+    feelsLikeElement.classList = 'feels-like';
+    feelsLikeElement.innerHTML = `Feels like ${weatherInfo.temperatures.feelsLike}&deg;${currentTempUnit}`;
 
-    const description = document.createElement('p');
-    description.classList = 'description';
-    description.textContent = weatherInfo.weatherCondition;
+    const descriptionElement = document.createElement('p');
+    descriptionElement.classList = 'description';
+    descriptionElement.textContent = weatherInfo.weatherCondition;
 
-    const humidity = document.createElement('p');
-    humidity.classList = 'humidity';
-    humidity.textContent = 'Humidity: ' + weatherInfo.humidity + ' %';
+    const humidityElement = document.createElement('p');
+    humidityElement.classList = 'humidity';
+    humidityElement.textContent = `Humidity: ${weatherInfo.humidity}%`;
 
-    const windSpeed = document.createElement('p');
-    windSpeed.classList = 'wind-speed';
-    windSpeed.textContent = 'Wind speed: ' + weatherInfo.windSpeed + ' km/h';
+    const windSpeedElement = document.createElement('p');
+    windSpeedElement.classList = 'wind-speed';
+    windSpeedElement.textContent = `Wind speed: ${weatherInfo.windSpeed}km/h`;
 
-    const uvIndex = document.createElement('p');
-    uvIndex.classList = 'uv-index';
-    uvIndex.textContent = 'UV Index: ' + weatherInfo.uvIndex;
+    const uvIndexElement = document.createElement('p');
+    uvIndexElement.classList = 'uv-index';
+    uvIndexElement.textContent = `UV Index: ${weatherInfo.uvIndex}`;
 
-    const maxTemp = document.createElement('p');
-    maxTemp.classList = 'max-temp';
-    maxTemp.innerHTML =
-        convertToC(weatherInfo.maxTemp) +
-        '&deg;C' +
+    const maxTempElement = document.createElement('p');
+    maxTempElement.classList = 'max-temp';
+    maxTempElement.innerHTML =
+        `${weatherInfo.temperatures.maxTemp}&deg;${currentTempUnit}` +
         ' / ' +
-        convertToC(weatherInfo.minTemp) +
-        '&deg;C';
+        `${weatherInfo.temperatures.minTemp}&deg;${currentTempUnit}`;
 
-    const visibility = document.createElement('p');
-    visibility.classList = 'visibility';
-    visibility.textContent = 'Visibility: ' + weatherInfo.visibility + ' km';
+    const visibilityElement = document.createElement('p');
+    visibilityElement.classList = 'visibility';
+    visibilityElement.textContent = `Visibility: ${weatherInfo.visibility}km`;
 
     const gifSrc = weatherGifMap.get(weatherInfo.weatherIcon);
     document.body.style.backgroundImage = `url(${gifSrc})`;
     document.body.style.backgroundColor = 'black';
     document.body.style.backgroundSize = 'cover';
 
-    weatherMainInfo.appendChild(location);
-    weatherMainInfo.appendChild(temperature);
-    weatherMainInfo.appendChild(description);
-    weatherMainInfo.appendChild(maxTemp);
-    weatherMainInfo.appendChild(feelsLike);
-    weatherMiscInfo.appendChild(humidity);
-    weatherMiscInfo.appendChild(windSpeed);
-    weatherMiscInfo.appendChild(uvIndex);
-    weatherMiscInfo.appendChild(visibility);
+    weatherMainInfo.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+
+    weatherMainInfo.appendChild(locationElement);
+    weatherMainInfo.appendChild(temperatureElement);
+    weatherMainInfo.appendChild(descriptionElement);
+    weatherMainInfo.appendChild(maxTempElement);
+    weatherMainInfo.appendChild(feelsLikeElement);
+    weatherMiscInfo.appendChild(humidityElement);
+    weatherMiscInfo.appendChild(windSpeedElement);
+    weatherMiscInfo.appendChild(uvIndexElement);
+    weatherMiscInfo.appendChild(visibilityElement);
+}
+
+//updates temp on webpage when unit is converted.
+function updateTemperature(temperatures, unit) {
+    const feelsLikeElement = document.querySelector('.feels-like');
+    const temperatureElement = document.querySelector('.temperature');
+    const maxTempElement = document.querySelector('.max-temp');
+
+    temperatureElement.innerHTML = `${temperatures.currentTemp}&deg;${unit}`;
+    feelsLikeElement.innerHTML = `Feels like ${temperatures.feelsLike}&deg;${unit}`;
+    maxTempElement.innerHTML =
+        `${temperatures.maxTemp}&deg;${unit}` +
+        ' / ' +
+        `${temperatures.minTemp}&deg;${unit}`;
 }
 
 function validateSearchInput() {
@@ -101,32 +122,43 @@ function parseJSON(responseJSON) {
         address: address,
         resolvedAddress: fullAddress,
         currentConditions: {
-            temp: currentTemp,
             uvindex: uvIndex,
             humidity: humidity,
             windspeed: windSpeed,
             icon: weatherIcon,
             conditions: weatherCondition,
-            feelslike: feelsLike,
             visibility: visibility,
         },
         description: description,
+    } = responseJSON;
+
+    let {
+        currentConditions: {
+            temp: currentTemp,
+            feelslike: feelsLike,
+        },
         days: [{ tempmax: maxTemp, tempmin: minTemp }],
     } = responseJSON;
+
+    if(currentTempUnit === FAHRENHEIT) {
+        currentTemp = convertCelsiusToFahrenheit(currentTemp);
+        feelsLike = convertCelsiusToFahrenheit(feelsLike);
+        maxTemp = convertCelsiusToFahrenheit(maxTemp);
+        minTemp = convertCelsiusToFahrenheit(minTemp);
+    }
+
+    const temperatures = { currentTemp, feelsLike, maxTemp, minTemp };
 
     return {
         address,
         fullAddress,
-        currentTemp,
+        temperatures,
         uvIndex,
         humidity,
         windSpeed,
         weatherIcon,
         weatherCondition,
         description,
-        maxTemp,
-        minTemp,
-        feelsLike,
         visibility,
     };
 }
@@ -136,24 +168,68 @@ async function handleSearchWeather() {
         return;
     }
 
-    await getWeatherInfo();
+    await fetchWeatherInfo();
 }
 
-async function getWeatherInfo() {
+async function fetchWeatherInfo() {
     const location = searchInput.value;
     const apiKey = 'E7UZ2REAT4L7RM5TCR8J248GX';
-    const requestURL = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?key=${apiKey}`;
+    const requestURL = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?unitGroup=metric&key=${apiKey}`;
 
     const response = await fetch(requestURL);
     const responseJSON = await response.json();
     // console.log(responseJSON);
     const weatherInfo = parseJSON(responseJSON);
     // console.log(weatherInfo);
+    allTemperatures = weatherInfo.temperatures;
     displayWeather(weatherInfo);
 }
 
-function convertToC(temp) {
-    return (((temp - 32) * 5) / 9).toFixed(1);
+function convertFahrenheitToCelcius(fahrenheitTemp) {
+    const celsiusTemp = (((fahrenheitTemp - 32) * 5) / 9).toFixed(1);
+    return parseFloat(celsiusTemp);
+}
+
+function convertCelsiusToFahrenheit(celsiusTemp) {
+    const fahrenheitTemp = ((celsiusTemp * 9) / 5 + 32).toFixed(1);
+    return parseFloat(fahrenheitTemp);
 }
 
 searchWeatherBtn.addEventListener('click', handleSearchWeather);
+
+tempUnitToggle.addEventListener('change', switchTemperatureUnit)
+
+function switchTemperatureUnit()
+{
+    if (currentTempUnit === CELSIUS) {
+        allTemperatures.currentTemp = convertCelsiusToFahrenheit(
+            allTemperatures.currentTemp
+        );
+        allTemperatures.feelsLike = convertCelsiusToFahrenheit(
+            allTemperatures.feelsLike
+        );
+        allTemperatures.maxTemp = convertCelsiusToFahrenheit(
+            allTemperatures.maxTemp
+        );
+        allTemperatures.minTemp = convertCelsiusToFahrenheit(
+            allTemperatures.minTemp
+        );
+        currentTempUnit = FAHRENHEIT;
+        updateTemperature(allTemperatures, currentTempUnit);
+    } else {
+        allTemperatures.currentTemp = convertFahrenheitToCelcius(
+            allTemperatures.currentTemp
+        );
+        allTemperatures.feelsLike = convertFahrenheitToCelcius(
+            allTemperatures.feelsLike
+        );
+        allTemperatures.maxTemp = convertFahrenheitToCelcius(
+            allTemperatures.maxTemp
+        );
+        allTemperatures.minTemp = convertFahrenheitToCelcius(
+            allTemperatures.minTemp
+        );
+        currentTempUnit = CELSIUS;
+        updateTemperature(allTemperatures, currentTempUnit);
+    }
+}
