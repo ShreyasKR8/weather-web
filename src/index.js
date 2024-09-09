@@ -1,5 +1,6 @@
 import './style.css';
-import imageLoader from './imageLoader'
+import imageLoader from './imageLoader';
+import faviconImg from '../images/favicon.png';
 
 const CELSIUS = 'C';
 const FAHRENHEIT = 'F';
@@ -14,6 +15,14 @@ const weatherMiscInfo = document.querySelector('.weather-misc');
 const tempUnitToggle = document.querySelector('input[type=checkbox]');
 
 tempUnitToggle.checked = false;
+
+function setFavicon(favImg) {
+    let headTitle = document.querySelector('head');
+    let setFavicon = document.createElement('link');
+    setFavicon.setAttribute('rel', 'shortcut icon');
+    setFavicon.setAttribute('href', favImg);
+    headTitle.appendChild(setFavicon);
+}
 
 //Display weather info on webpage
 function displayWeather(weatherInfo) {
@@ -75,7 +84,7 @@ function displayWeather(weatherInfo) {
 }
 
 async function applyWeatherGif(weatherIcon) {
-    const gifSrc = await imageLoader.getGif(weatherIcon)
+    const gifSrc = await imageLoader.getGif(weatherIcon);
     if (gifSrc) {
         document.body.style.backgroundImage = `url(${gifSrc})`;
     }
@@ -242,6 +251,8 @@ function switchTemperatureUnit() {
         updateTemperature(allTemperatures, currentTempUnit);
     }
 }
+
+setFavicon(faviconImg);
 
 searchWeatherBtn.addEventListener('click', handleSearchWeather);
 
