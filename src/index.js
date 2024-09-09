@@ -1,4 +1,5 @@
 import './style.css';
+import imageLoader from './imageLoader'
 
 const CELSIUS = 'C';
 const FAHRENHEIT = 'F';
@@ -14,26 +15,7 @@ const tempUnitToggle = document.querySelector('input[type=checkbox]');
 
 tempUnitToggle.checked = false;
 
-const weatherGifMap = new Map();
-weatherGifMap.set('clear-day', '../images/SunnyDay.gif');
-weatherGifMap.set('clear-night', '../images/ClearNight.gif');
-weatherGifMap.set('partly-cloudy-night', '../images/PartlyCloudyNight.gif');
-weatherGifMap.set('partly-cloudy-day', '../images/CloudyDay.gif');
-weatherGifMap.set('cloudy', '../images/CloudyDay.gif');
-weatherGifMap.set('rain', '../images/RainyAnime.gif');
-weatherGifMap.set('showers-day', '../images/RainyDay.gif');
-weatherGifMap.set('showers-night', '../images/RainyNight.gif');
-weatherGifMap.set('snow-showers-day', '../images/Snowy.gif');
-weatherGifMap.set('snow-showers-night', '../images/SnowyNight.gif');
-weatherGifMap.set('snow', '../images/Snowy.gif');
-weatherGifMap.set('thunder', '../images/Thunder.gif');
-weatherGifMap.set('thunder-rain', '../images/Thunder.gif');
-weatherGifMap.set('thunder-showers-day', '../images/Thunder.gif');
-weatherGifMap.set('thunder-showers-night', '../images/Thunder.gif');
-weatherGifMap.set('wind', '../images/WindyCloudyDay.gif');
-weatherGifMap.set('fog', '../images/foggy.gif');
-weatherGifMap.set('hail', '../images/hail.gif');
-
+//Display weather info on webpage
 function displayWeather(weatherInfo) {
     weatherMainInfo.replaceChildren();
     weatherMiscInfo.replaceChildren();
@@ -77,10 +59,7 @@ function displayWeather(weatherInfo) {
     visibilityElement.classList = 'visibility';
     visibilityElement.textContent = `Visibility: ${weatherInfo.visibility}km`;
 
-    const gifSrc = weatherGifMap.get(weatherInfo.weatherIcon);
-    document.body.style.backgroundImage = `url(${gifSrc})`;
-    document.body.style.backgroundColor = 'black';
-    document.body.style.backgroundSize = 'cover';
+    applyWeatherGif(weatherInfo.weatherIcon).then();
 
     weatherMainInfo.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
 
@@ -93,6 +72,15 @@ function displayWeather(weatherInfo) {
     weatherMiscInfo.appendChild(windSpeedElement);
     weatherMiscInfo.appendChild(uvIndexElement);
     weatherMiscInfo.appendChild(visibilityElement);
+}
+
+async function applyWeatherGif(weatherIcon) {
+    const gifSrc = await imageLoader.getGif(weatherIcon)
+    if (gifSrc) {
+        document.body.style.backgroundImage = `url(${gifSrc})`;
+    }
+    document.body.style.backgroundColor = 'black';
+    document.body.style.backgroundSize = 'cover';
 }
 
 //updates temp on webpage when unit is converted.
@@ -187,7 +175,7 @@ async function fetchWeatherInfo() {
 
     const response = await fetch(requestURL);
     const responseJSON = await response.json();
-    console.log(responseJSON);
+    // console.log(responseJSON);
     const weatherInfo = parseJSON(responseJSON);
     // console.log(weatherInfo);
     allTemperatures = weatherInfo.temperatures;
